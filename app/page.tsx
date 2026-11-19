@@ -1,69 +1,285 @@
-import Image from "next/image";
+"use client"
 
-export default function Home() {
+import { useState } from "react"
+import Link from "next/link"
+import { useDemo } from "@/context/DemoContext"
+import { daysWaiting, APPLICANT_SOURCES } from "@/data/demo"
+import { ArrowRight, TrendingUp, Lock, X } from "lucide-react"
+import { Card } from "@/components/ui/Card"
+
+const SAMPLE_ROLES = [
+  { title: "Sales Development Rep", count: 312, days: 3 },
+  { title: "Customer Success Mgr", count: 198, days: 7 },
+]
+
+function getHour() {
+  return new Date().getHours()
+}
+
+function getGreeting() {
+  const h = getHour()
+  if (h < 12) return "Good morning"
+  if (h < 17) return "Good afternoon"
+  return "Good evening"
+}
+
+export default function HomePage() {
+  const { role, candidates, sortedCandidates, scoreOf, responseCommitment } = useDemo()
+  const [howItWorksDismissed, setHowItWorksDismissed] = useState(false)
+
+  const shortlisted = candidates.filter((c) => c.status === "shortlisted")
+  const passed = candidates.filter((c) => c.status === "pass")
+  const pending = sortedCandidates.filter((c) => c.status === "pending")
+  const toReview = pending.length
+  const invitesReady = shortlisted.length
+  const heardBack = shortlisted.length + passed.length
+
+  // Candidates still pending who will hit their 7-day response deadline in the next 48h
+  const nearDeadlineSample = candidates.filter(
+    (c) => c.status === "pending" && daysWaiting(c.appliedDate) >= 5 && daysWaiting(c.appliedDate) < 7
+  )
+  const approachingDeadlineCount = Math.round(
+    nearDeadlineSample.length * (role.applicantCount / candidates.length)
+  )
+
+  // Impact funnel
+  const ranked = candidates.length
+  const closed = passed.filter((c) => c.status === "pass").length
+
+  // Recruiter hours saved estimate: each review ~3 min × applicants processed
+  const hoursSaved = Math.round(((role.applicantCount - toReview) * 3) / 60)
+
+  // Top 3 pending by score for the preview
+  const top3 = [...pending].slice(0, 3)
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <div className="max-w-4xl mx-auto px-6 py-10">
+      {/* Greeting */}
+      <div className="mb-8">
+        <h1 className="text-2xl font-semibold text-text tracking-tight">
+          {getGreeting()}, Sarah
+        </h1>
+        <p className="text-muted text-sm mt-1">
+          {new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
+        </p>
+      </div>
+
+      {/* How Pathline works strip */}
+      {!howItWorksDismissed && (
+        <div className="mb-6 p-4 rounded-2xl bg-surface border border-border flex items-start gap-3">
+          <div className="flex-1">
+            <p className="text-xs font-medium text-muted uppercase tracking-wide mb-2.5">How Pathline works</p>
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <HowStep n={1} text="Post anywhere" />
+              <StepArrow />
+              <HowStep n={2} text="Applicants apply through Pathline or get imported" />
+              <StepArrow />
+              <HowStep n={3} text="Pathline ranks on evidence" />
+              <StepArrow />
+              <HowStep n={4} text="You invite and close the loop" />
+            </div>
+          </div>
+          <button
+            onClick={() => setHowItWorksDismissed(true)}
+            className="p-1 rounded text-muted hover:text-text transition-colors cursor-pointer flex-shrink-0 mt-0.5"
+          >
+            <X size={14} />
+          </button>
+        </div>
+      )}
+
+      {/* Active role card */}
+      <div className="mb-6 p-6 rounded-2xl bg-surface border border-border shadow-sm">
+        <div className="flex items-start justify-between mb-5">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <div className="w-2 h-2 rounded-full bg-emerald-500" />
+              <span className="text-xs font-medium text-emerald-700">Active</span>
+            </div>
+            <h2 className="text-lg font-semibold text-text">{role.title}</h2>
+            <p className="text-sm text-muted">{role.company} · {role.applicantCount} applicants</p>
+          </div>
+          <Link
+            href="/queue"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-accent text-white text-sm font-semibold hover:bg-accent-hover transition-colors"
+          >
+            Review queue
+            <ArrowRight size={14} />
+          </Link>
+        </div>
+
+        {/* Stats row */}
+        <div className="grid grid-cols-3 gap-4 mb-5">
+          <div className="p-4 rounded-xl bg-bg border border-border">
+            <p className="text-2xl font-bold text-text tabular-nums">{toReview}</p>
+            <p className="text-xs text-muted mt-0.5">to review today</p>
+          </div>
+          <div className="p-4 rounded-xl bg-accent-light border border-accent/20">
+            <p className="text-2xl font-bold text-accent tabular-nums">{invitesReady}</p>
+            <p className="text-xs text-muted mt-0.5">invites ready to send</p>
+          </div>
+          <Link
+            href="/closure"
+            className={`p-4 rounded-xl border transition-colors hover:opacity-90 ${approachingDeadlineCount > 0 ? "bg-amber-50 border-amber-200" : "bg-bg border-border"}`}
+          >
+            <p className={`text-2xl font-bold tabular-nums ${approachingDeadlineCount > 0 ? "text-amber-700" : "text-text"}`}>{approachingDeadlineCount}</p>
+            <p className="text-xs text-muted mt-0.5 leading-snug">
+              reach {responseCommitment}-day commitment in 48h → Send updates
+            </p>
+          </Link>
+        </div>
+
+        {/* Track record */}
+        <div className="flex items-center gap-2 mb-5">
+          <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 flex-shrink-0" />
+          <p className="text-xs text-muted">
+            <span className="font-semibold text-text">96%</span> of applicants hear back within {responseCommitment} days · Vittacus track record
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        {/* Impact funnel */}
+        <div className="mb-5">
+          <p className="text-xs font-medium text-muted uppercase tracking-wide mb-3">Impact funnel</p>
+          <div className="flex items-center gap-2">
+            <FunnelStep label="Applied" count={role.applicantCount} accent={false} />
+            <ArrowRight size={12} className="text-muted flex-shrink-0" />
+            <FunnelStep label="Ranked by Pathline" count={ranked} accent={false} />
+            <ArrowRight size={12} className="text-muted flex-shrink-0" />
+            <FunnelStep label="Shortlisted" count={shortlisted.length} accent={true} />
+            <ArrowRight size={12} className="text-muted flex-shrink-0" />
+            <FunnelStep label="Closed" count={heardBack} accent={false} />
+          </div>
         </div>
-      </main>
+
+        {/* Where applicants came from */}
+        <div className="mb-5">
+          <p className="text-xs font-medium text-muted uppercase tracking-wide mb-2">Where applicants came from</p>
+          <div className="flex items-center flex-wrap">
+            {APPLICANT_SOURCES.map((s, i) => (
+              <span key={s.name} className="text-xs text-muted">
+                {i > 0 && <span className="mx-2 text-border">·</span>}
+                {s.name} <span className="font-semibold text-text tabular-nums">{s.count}</span>
+              </span>
+            ))}
+          </div>
+        </div>
+
+        {/* Hours saved */}
+        <div className="flex items-center gap-2 p-3 rounded-xl bg-bg border border-border">
+          <TrendingUp size={14} className="text-accent flex-shrink-0" />
+          <p className="text-sm text-text">
+            <span className="font-semibold">~{hoursSaved} recruiter hours saved</span>
+            <span className="text-muted"> on this role so far</span>
+          </p>
+        </div>
+      </div>
+
+      {/* Top pending candidates preview */}
+      {top3.length > 0 && (
+        <div className="mb-6">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-semibold text-text">Top candidates waiting</h3>
+            <Link href="/queue" className="text-xs text-accent hover:text-accent-hover transition-colors">
+              See all {toReview} →
+            </Link>
+          </div>
+          <div className="flex flex-col gap-2">
+            {top3.map((c, i) => (
+              <Link
+                key={c.id}
+                href="/queue"
+                className="flex items-center gap-4 p-4 rounded-xl bg-surface border border-border hover:border-accent/30 hover:bg-accent-light/30 transition-colors"
+              >
+                <span className="text-xs text-muted tabular-nums w-4 text-right flex-shrink-0 font-medium">{i + 1}</span>
+                <div className="w-8 h-8 rounded-full bg-bg border border-border flex items-center justify-center text-xs font-semibold text-muted flex-shrink-0">
+                  {c.initials}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-text truncate">{c.headline}</p>
+                  <div className="flex gap-1 mt-0.5 flex-wrap">
+                    {c.whySurfaced.slice(0, 2).map((tag) => (
+                      <span key={tag} className="text-xs text-muted">{tag}</span>
+                    ))}
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  <ScoreRing score={scoreOf(c)} />
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Other roles (locked) */}
+      <div>
+        <h3 className="text-sm font-semibold text-text mb-3">Other roles</h3>
+        <div className="grid grid-cols-2 gap-3">
+          {SAMPLE_ROLES.map((r) => (
+            <div
+              key={r.title}
+              className="p-4 rounded-xl bg-surface border border-border opacity-60 relative overflow-hidden"
+            >
+              <div className="flex items-start justify-between mb-3">
+                <div>
+                  <p className="text-sm font-medium text-text">{r.title}</p>
+                  <p className="text-xs text-muted mt-0.5">Vittacus · {r.count} applicants</p>
+                </div>
+                <div className="flex items-center gap-1 text-xs text-muted">
+                  <Lock size={11} />
+                  Sample only
+                </div>
+              </div>
+              <div className="flex items-center gap-4">
+                <div>
+                  <p className="text-lg font-bold text-text tabular-nums">{r.count}</p>
+                  <p className="text-xs text-muted">applicants</p>
+                </div>
+                <div>
+                  <p className="text-lg font-bold text-muted tabular-nums">{r.days}d</p>
+                  <p className="text-xs text-muted">left</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
-  );
+  )
+}
+
+function HowStep({ n, text }: { n: number; text: string }) {
+  return (
+    <div className="flex items-center gap-1.5">
+      <span className="w-4 h-4 rounded-full bg-accent text-white flex items-center justify-center text-[10px] font-bold flex-shrink-0">
+        {n}
+      </span>
+      <span className="text-xs text-text">{text}</span>
+    </div>
+  )
+}
+
+function StepArrow() {
+  return <ArrowRight size={12} className="text-muted flex-shrink-0" />
+}
+
+function FunnelStep({ label, count, accent }: { label: string; count: number; accent: boolean }) {
+  return (
+    <div className={`flex flex-col items-center px-3 py-2 rounded-lg ${accent ? "bg-accent-light border border-accent/20" : "bg-bg border border-border"}`}>
+      <p className={`text-base font-bold tabular-nums ${accent ? "text-accent" : "text-text"}`}>{count}</p>
+      <p className="text-xs text-muted whitespace-nowrap">{label}</p>
+    </div>
+  )
+}
+
+function ScoreRing({ score }: { score: number }) {
+  const color = score >= 75 ? "#059669" : score >= 50 ? "#D97706" : "#94A3B8"
+  return (
+    <div
+      className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold border-2"
+      style={{ borderColor: color, color }}
+    >
+      {score}
+    </div>
+  )
 }

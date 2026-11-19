@@ -43,22 +43,24 @@ Recruiters can’t easily write down what a good candidate looks like, but they 
 **Unit of Signal: Evidence cards, not the resume.** The resume stays as background, but each candidate is represented by evidence cards: short, concrete proof points tagged to the traits the role is calibrated on. Signal comes in layers, so it never drops to zero:
 
 * **Resume evidence (always available):** Pathline turns every resume, plus any LinkedIn or portfolio link, into specific claims like “Ran 7 projects in parallel and finished all 7.” This alone can rank every applicant, including ones imported from LinkedIn or Indeed.  
-* **Proof answers (optional boost):** short, role-specific questions that replace the cover letter, answered in about 150 words each. For example: “Tell us about a time you owned a messy process from start to finish. What did you change?”  
+* **Short answers (optional boost):** short, role-specific application questions that replace the cover letter, answered in about 150 words each. For example: “Tell us about a time you owned a messy process from start to finish. What did you change?”  
 * **Recruiter feedback (learns over time):** every Shortlist, More like this and Less like this adjusts what the ranking looks for.
 
-Every evidence card shows its source (resume or proof answer), so recruiters can see what the ranking is based on.
+Every evidence card shows its source (resume or short answer), so recruiters can see what the ranking is based on.
 
-**How proof prompts work:**
+**How application questions work:**
 
-* **Pathline writes the prompts.** After calibration, it suggests 2 short prompts based on the traits that matter most. The recruiter approves or edits them in one click, so there’s no blank page.  
+* **Pathline writes the questions.** After calibration, it suggests 2 short application questions based on the traits that matter most. The recruiter approves or edits them in one click, so there’s no blank page.  
 * **Candidates answer them on the application, optionally:** “Optional: answer 2 short questions so the team sees more than your resume.” About 5 minutes.  
 * **Everyone is ranked in one pass.** Candidates who answered get richer evidence cards. Those who skipped, and anyone imported, are ranked on resume evidence alone.
 
-**Why proof answers beat cover letters:** they’re specific to the role, comparable across candidates, short, and they show real interest.
+**Why short answers beat cover letters:** they’re specific to the role, comparable across candidates, short, and they show real interest.
 
 **Considered and rejected: a two-stage funnel** where resume evidence cuts 500 to 100 and only those 100 answer prompts. It reduced candidate friction, but added a second round for the recruiter and slowed the process down, which works against the core goal.
 
 **Trade-off:** optional prompts mean uneven evidence between candidates. Each card shows its source, so recruiters can tell when someone is ranked on resume evidence only.
+
+**Fairness rule for application questions:** Answers count as evidence for the same traits as a resume — never as a bonus for answering. Candidates who skip are ranked on resume evidence alone and are not penalized. This is surfaced to candidates in the job post ("Optional — about 5 min. You won't be penalized for skipping.") and to recruiters in the calibration screen.
 
 # **Moment of Connection**
 
@@ -68,8 +70,8 @@ This is where Pathline is most different from LinkedIn.
 
 **On Pathline:**
 
-1. **Interest is mutual before anyone talks.** The candidate applied (and often answered the proof prompts), and the recruiter reviewed their evidence and shortlisted them. That’s a double opt-in.  
-2. **The invite is specific.** It’s built from the recruiter’s template plus one personal line quoting the candidate’s own evidence: “Your answer about rebuilding the onboarding process stood out to us.” If there’s no proof answer, it quotes resume evidence instead.  
+1. **Interest is mutual before anyone talks.** The candidate applied (and often answered the application questions), and the recruiter reviewed their evidence and shortlisted them. That’s a double opt-in.  
+2. **The invite is specific.** It’s built from the recruiter’s template plus one personal line quoting the candidate’s own evidence: “Your answer about rebuilding the onboarding process stood out to us.” If there’s no short answer, it quotes resume evidence instead.  
 3. **It’s transparent.** The invite includes the salary range, the stages of the process, the timeline and why they were shortlisted.  
 4. **It’s one step to act.** A booking link, plus one-tap replies: book a time, ask a question, or withdraw.  
 5. **Everyone else still hears back.** Candidates not moving forward get a kind, recruiter-approved note within 7 days, with an option to join the company’s talent pool.
@@ -78,25 +80,22 @@ This is where Pathline is most different from LinkedIn.
 
 # **Core Flow**
 
-1. **Create a Role**: Includes title, team, location, salary range, and process stages (required info). Then can calibrate in one of two ways  
-   * Upload examples: 2 to 4 profiles of people who’d be great in this role (can include current team members or sample profiles)  
-   * Set priorities: sliders for the traits that matter most  
-2. **Review “what good looks like”**: Pathline shows the traits it pulled out, each with a weight, as editable chips (for example, “Owned 0 to 1 projects: High”). The recruiter can adjust these for higher or lower weighted values. Pathline also suggests 2 proof prompts the recruiter can approve or edit, which appear on the application as optional. A preview shows the public job post with the salary, the traits the role is calibrated on and the 7-day response promise.  
-3. **Daily ranked queue**: “487 applicants, your top 40 today.” Each candidate card shows a short summary, a match score, two or three evidence quotes and why they surfaced. Actions include: Shortlist, Not now, More like this, and Less like this (including quick reasoning). The queue then re-ranks as the recruiter gives feedbacks and takes this into consideration for future applicants  
-4. **Shortlist and Outreach (Moment of Connection)**: For each shortlisted candidate, Pathline drafts an interview invite using the recruiter’s template plus one personal line grounded in that person’s evidence, with a booking link. The recruiter reviews, edits if needed and sends in bulk  
-5. **Close for all parties:** Every applicant has a visible status. Candidates who aren’t moving forward get a kind, recruiter-approved note within 7 days, with an option to join the company’s talent pool.
+1. **Create a Role and Calibrate**: Enter title, team, location, salary range, process stages, response commitment (5/7/10/14 days, default 7), and blind screening toggle (on by default). The role setup also shows the two intake paths: (a) Apply link — Pathline generates a unique apply link (e.g., pathline.app/apply/vittacus-bizops) that the recruiter uses as the Apply link on every job board; applicants who apply through it land in Pathline directly and can optionally answer the application questions; (b) Import — recruiters can import applicants from an ATS (Greenhouse, Lever) or CSV export, which arrives as resume evidence only. Pathline then suggests 6 starting traits for the role type. Each trait starts as “Suggested” — the recruiter approves the ones that fit and sets a weight (Low / Medium / High). An “Approve all” shortcut speeds this up. A live impact preview updates instantly on every approval or weight change, showing the number of strong matches from the pool. Weights can also be calibrated via “Learn from your best hires”: add 3 people you’d hire again (or use the sample profiles), Pathline analyzes what they have in common and suggests weight changes one at a time — the recruiter accepts or skips each. Below the traits, Pathline suggests 2 application questions auto-generated from the top-weighted traits. A “Save as template” button and a “Preview job post” panel (salary, stages, traits rubric, response commitment track record) round out the screen.  
+2. **Daily ranked queue**: “487 applicants, your top 40 today.” Each candidate card shows a short summary, a match score, a plain-English “why #1” sentence, a score breakdown by trait (bar chart), and evidence cards tagged by source (resume or short answer) and trait. Actions include: Shortlist, Pass, More like this, and Less like this. When blind screening is on, names are hidden automatically — no toggle, just a lock badge. The queue re-ranks live as the recruiter gives feedback.  
+4. **Shortlist and Outreach (Moment of Connection)**: For each shortlisted candidate, Pathline drafts an intro email using a shared template plus one personal line grounded in that person’s evidence. The recruiter clicks to edit inline or adjusts the shared template for all invites. The right panel shows a preview of exactly what the candidate receives, plus a “Track your application status” link.  
+5. **Close for all parties:** Every applicant has a visible status. Candidates not moving forward get a kind, recruiter-approved note within the response commitment window, with an option to join the company’s talent pool. Applicants approaching their deadline are flagged so the recruiter can send a “still reviewing” update instead of silence. Two separate closure note templates are used: (a) for candidates the recruiter individually reviewed and passed on — this note can honestly claim careful review; (b) for the bulk of applicants below the shortlist who were not individually reviewed — this note is honest about the volume and never claims individual review. Recruiters see both templates, can edit them, and approve before sending.
 
 # **Key Decisions**
 
 | Decision | Choice | Alternatives Considered | Why |
 | :---- | :---- | :---- | :---- |
 | Side of the marketplace | Recruiter | Candidate side | The pain is sharpest here, and fixing it is what lets candidates finally hear back |
-| Unit of Signal | Evidence pulled from the resume, calibrated to the role, plus optional proof answers | Resume only, required prompts with a two-stage funnel | Resume evidence guarantees signal for every applicant, and optional prompts add depth without a second round for the recruiter. |
+| Unit of Signal | Evidence pulled from the resume, calibrated to the role, plus optional short answers | Resume only, required prompts with a two-stage funnel | Resume evidence guarantees signal for every applicant, and optional short answers add depth without a second round for the recruiter. |
 | Calibration | Example profiles or weighted sliders | Keyword filters, fully automatic AI rankings | Recruiters can point to good more easily than can describe it, and fully automatic ranking is a black box |
-| Proof Prompts | Auto suggested by Pathline, can be approved in one click | Recruiter writes them from scratch | Most recruiters won’t write prompts. Suggesting them removes the effort without removing control |
+| Application Questions | Auto suggested by Pathline, can be approved in one click | Recruiter writes them from scratch | Most recruiters won’t write questions. Suggesting them removes the effort without removing control |
 | Who initiates | Candidates apply, Pathline ranks, the recruiter reaches out | Recruiters cold-source anyone and included algorithmic intros | Keeps the familiar apply flow while making the recruiter’s outreach fast and personal |
-| Transparency | Salary range, process stages, published rubric (the traits the role is calibrated on), why-shortlisted, and a 7-day response promise | Anonymous browsing | Builds trust on both sides and makes the ranking explainable |
-| Bias protection | Names, photos, and schools are hidden by default during review, ranking uses skills and evidence only, person makes every decision | Fully blind hiring | Calibration on current employees could copy the existing team. Explainability and human decisions guard against that |
+| Transparency | Salary range, process stages, published rubric (the traits the role is calibrated on), why-shortlisted, and a company-set response commitment (default 7 days) tracked per applicant and shown as a track record | Anonymous browsing | Builds trust on both sides and makes the ranking explainable |
+| Bias protection | Blind screening (names, photos, schools hidden during review) is a role-level toggle, on by default. Ranking uses skills and evidence only. Person makes every decision. | Fully blind hiring | Calibration on current employees could copy the existing team. Explainability and human decisions guard against that |
 | Cold start | Single player first: recruiters bring the applicants they already get from LinkedIn and Indeed | Build both sides at once and seed a fake marketplace | Useful on day one with no marketplace, allowing the network to grow from there. The demo uses labeled sample data. |
 | Moment of connection | A personal interview invite with a booking link, not a generic "you're a priority” email | A generic “you’re a priority candidate” email to the applicant | Every shortlist message comes with a concrete next step, so nobody is told they’re special and then is dropped. |
 
@@ -104,14 +103,13 @@ This is where Pathline is most different from LinkedIn.
 
 **Must have:**
 
-* Role setup with salary, process stages and both calibration paths (example profiles and weighted sliders).  
-* Editable “what good looks like” trait chips with weights, auto-suggested proof prompts, and a public job post preview.  
-* Ranked queue of about 40 sample candidates, labeled as drawn from a pool of 487\. Some have proof answers and some have resume evidence only.  
-* Candidate cards with a summary, match score, evidence cards labeled by source (resume or proof answer) and “why surfaced” tags.  
-* Shortlist, Not now, More like this and Less like this actions, with live re-ranking.  
-* “Hide names and schools” toggle, on by default.  
-* Split-screen moment of connection: the invite composer (template plus personal line, salary, process stages, booking link, bulk send) next to the candidate’s view of the invite and a status tracker.  
-* Closure notes for candidates not moving forward.  
+* Role setup (title, team, location, salary, process stages, response commitment select, blind screening toggle) and a single calibration screen with approve-first traits, Low / Medium / High weight controls, live impact preview, “Learn from your best hires” calibration (Accept/Skip per suggested change), editable application questions, a template save action, and a public job post preview.
+* Ranked queue of about 40 sample candidates, labeled as drawn from a pool of 487. Some have answered the application questions and some have resume evidence only.
+* Candidate detail with a plain-English “why” sentence, score breakdown by trait (bar chart), and evidence cards tagged by source and trait. Shortlist, Pass, More like this, and Less like this actions with live re-ranking.
+* Blind screening: names hidden in queue until shortlisted (enforced when blind screening is on; shown as a lock badge, not a toggle).
+* Outreach: shared template with per-candidate personal line, inline editing, “Edit template for all invites” button, right-panel email preview showing exactly what the candidate receives.
+* Closure notes for candidates not moving forward, with applicant deadline tracking and a “Send still reviewing” option for near-deadline applicants.
+* Numbered workflow steps in the top nav (1–5) with completion checkmarks.
 * A visible “Sample data” label and an “Import applicants” button.
 
 **Nice to Have:**
@@ -177,7 +175,7 @@ How many example profiles does calibration need before the ranking is useful?
 # **Prototype Implementation Notes**
 
 * **Stack:** Next.js with Tailwind, deployed on Vercel. No backend: all data lives in local JSON files, and auth is faked.  
-* **Sample data:** one fictional startup, “Vittacus” (Series A, 60 people), hiring a “Business Operations Associate.” About 40 candidate profiles, each with a name, headline, short summary, 3 or 4 evidence items tagged to traits and labeled by source (resume or proof answer), proof prompt answers for about half the candidates, and a trait vector.  
+* **Sample data:** one fictional startup, “Vittacus” (Series A, 60 people), hiring a “Business Operations Associate.” About 40 candidate profiles, each with a name, headline, short summary, 3 or 4 evidence items tagged to traits and labeled by source (resume or short answer), application question answers for about half the candidates, and a trait vector.  
 * **Scoring:** match score \= weighted sum of trait strengths, using the recruiter's trait weights. "More like this" nudges weights toward that candidate's strongest traits, and "Less like this" nudges them away, then the queue re-sorts with a short animation.  
 * **Outreach:** personal lines are pre-written in the sample data and inserted into the recruiter's template, so it looks generated without a live model call.  
 * **Look and feel:** clean, modern and calm. Light background, one confident accent color, generous spacing and clear typography. It should feel like a polished early-stage SaaS product, not a dashboard full of charts.

@@ -1,0 +1,16 @@
+first_name,last_name,email,current_title,current_company,applied_date,linkedin_url,resume_file
+Alex,Rivera,alex.rivera@email.com,"Operations Manager","Brightfield Retail",2026-11-10,linkedin.com/in/alex-rivera,applicant_01.pdf
+Taylor,Kim,taylor.kim@email.com,"Business Analyst","Atlas Analytics",2026-11-10,linkedin.com/in/taylor-kim,applicant_02.pdf
+Morgan,Chen,morgan.chen@email.com,"Project Coordinator","Kinetic Creative",2026-11-11,linkedin.com/in/morgan-chen,applicant_03.pdf
+Jordan,Williams,jordan.williams@email.com,"Chief of Staff","Crest AI",2026-11-11,linkedin.com/in/jordan-williams,applicant_04.pdf
+Casey,Martinez,casey.martinez@email.com,"Sales Development Rep","Prism Software",2026-11-12,linkedin.com/in/casey-martinez,applicant_05.pdf
+Riley,Johnson,riley.johnson@email.com,"Finance & Ops Manager","Veda Health",2026-11-12,linkedin.com/in/riley-johnson,applicant_06.pdf
+Sam,Patel,sam.patel@email.com,"Operations Analyst","Harbor Freight & Logistics",2026-11-13,linkedin.com/in/sam-patel,applicant_07.pdf
+Blake,Thompson,blake.thompson@email.com,"Customer Success Lead","Forge Enterprise",2026-11-13,linkedin.com/in/blake-thompson,applicant_08.pdf
+Avery,Davis,avery.davis@email.com,"Analyst","Meridian Consulting",2026-11-14,linkedin.com/in/avery-davis,applicant_09.pdf
+Quinn,Anderson,quinn.anderson@email.com,"Office & People Manager","Rove Systems",2026-11-14,linkedin.com/in/quinn-anderson,applicant_10.pdf
+Drew,Wilson,drew.wilson@email.com,"Program Manager","Catalyst Software",2026-11-15,linkedin.com/in/drew-wilson,applicant_11.pdf
+Peyton,Brown,peyton.brown@email.com,"Logistics Coordinator","SkyLine Distribution",2026-11-15,linkedin.com/in/peyton-brown,applicant_12.pdf
+Sage,Garcia,sage.garcia@email.com,"Growth Analyst","Drift Consumer",2026-11-16,linkedin.com/in/sage-garcia,applicant_13.pdf
+Cameron,Lee,cameron.lee@email.com,"Operations Manager","Nori Marketplace",2026-11-17,linkedin.com/in/cameron-lee,applicant_14.pdf
+Alexis,White,alexis.white@email.com,"Revenue Operations Manager","Polaris SaaS",2026-11-18,linkedin.com/in/alexis-white,applicant_15.pdf
