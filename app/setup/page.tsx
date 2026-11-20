@@ -57,6 +57,7 @@ export default function SetupPage() {
   const [showPreview, setShowPreview] = useState(false)
   const [isDragging, setIsDragging] = useState(false)
   const [importOpen, setImportOpen] = useState(false)
+  const [showAppPreview, setShowAppPreview] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
 
   const addStage = () => {
@@ -374,56 +375,85 @@ export default function SetupPage() {
         </div>
       </Card>
 
-      {/* Applicant intake */}
-      <Card className="mb-5">
-        <h3 className="text-sm font-semibold text-text mb-1">Applicant intake</h3>
-        <p className="text-xs text-muted mb-4">Post anywhere. Applicants come to Pathline.</p>
-
-        <div className="flex flex-col gap-2 mb-4">
-          {[
-            { name: "LinkedIn Jobs", label: "Apply link → Pathline" },
-            { name: "Indeed", label: "Apply link → Pathline" },
-            { name: "Handshake", label: "Apply link → Pathline" },
-            { name: "Careers page", label: "Apply link → Pathline" },
-          ].map((s) => (
-            <div key={s.name} className="flex items-center justify-between gap-3 px-3 py-2.5 rounded-xl bg-bg border border-border">
-              <div className="flex items-center gap-2">
-                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 flex-shrink-0" />
-                <span className="text-sm text-text">{s.name}</span>
+      {/* How applicants get to Pathline */}
+      <div className="mb-5">
+        <h3 className="text-sm font-semibold text-text mb-3">How applicants get to Pathline</h3>
+        <div className="grid grid-cols-2 gap-4">
+          {/* Card A — apply link */}
+          <div className="p-5 rounded-2xl bg-surface border border-border flex flex-col">
+            <p className="text-sm font-semibold text-text mb-4">New applicants: use your apply link</p>
+            <div className="flex flex-col gap-3.5 flex-1">
+              <div className="flex gap-2.5">
+                <span className="w-5 h-5 rounded-full bg-accent text-white flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">1</span>
+                <p className="text-xs text-text leading-relaxed">Post the job where you already do (LinkedIn, Indeed, Handshake, careers page)</p>
               </div>
-              <span className="text-xs font-medium text-emerald-700">{s.label} · Connected</span>
+              <div className="flex gap-2.5">
+                <span className="w-5 h-5 rounded-full bg-accent text-white flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">2</span>
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs text-text leading-relaxed mb-1.5">Paste this link as the job&apos;s Apply link</p>
+                  <div className="flex items-center gap-1.5 p-2 rounded-lg bg-bg border border-border">
+                    <span className="text-xs text-text font-mono flex-1 truncate">pathline.app/apply/vittacus-bizops</span>
+                    <button
+                      onClick={() => toast("Link copied to clipboard")}
+                      className="text-xs font-medium text-accent hover:text-accent-hover transition-colors cursor-pointer flex-shrink-0 px-2 py-0.5 rounded border border-accent/30 hover:bg-accent-light"
+                    >
+                      Copy
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div className="flex gap-2.5">
+                <span className="w-5 h-5 rounded-full bg-accent text-white flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">3</span>
+                <p className="text-xs text-text leading-relaxed">Applicants apply here and appear in Review automatically</p>
+              </div>
             </div>
-          ))}
-          <div className="flex items-center justify-between gap-3 px-3 py-2.5 rounded-xl bg-bg border border-border">
-            <div className="flex items-center gap-2">
-              <div className="w-1.5 h-1.5 rounded-full bg-muted flex-shrink-0" />
-              <span className="text-sm text-text">Import from Greenhouse / Lever / CSV</span>
-            </div>
-            <button
-              onClick={() => setImportOpen(true)}
-              className="text-xs font-medium text-accent hover:text-accent-hover transition-colors cursor-pointer px-2.5 py-1 rounded-lg border border-accent/30 hover:bg-accent-light"
-            >
-              Import
-            </button>
-          </div>
-        </div>
 
-        <div className="p-3 rounded-xl bg-bg border border-border">
-          <div className="flex items-center justify-between gap-3">
-            <div className="min-w-0">
-              <p className="text-xs font-medium text-muted mb-0.5">Your Pathline apply link</p>
-              <p className="text-sm text-text font-mono truncate">pathline.app/apply/vittacus-bizops</p>
+            {/* Job board checklist */}
+            <div className="mt-4 pt-4 border-t border-border">
+              <div className="flex flex-wrap gap-x-3 gap-y-1 mb-1">
+                {["LinkedIn", "Indeed", "Handshake", "Careers page"].map((board) => (
+                  <span key={board} className="text-xs text-muted">
+                    {board} <span className="text-emerald-600 font-medium">✓ link added</span>
+                  </span>
+                ))}
+              </div>
+              <p className="text-xs text-muted/70">Marked when you&apos;ve added the apply link to that post.</p>
             </div>
+
+            {/* Preview application page */}
             <button
-              onClick={() => toast("Link copied to clipboard")}
-              className="text-xs font-medium text-accent hover:text-accent-hover transition-colors cursor-pointer flex-shrink-0 px-2.5 py-1.5 rounded-lg border border-accent/30 hover:bg-accent-light"
+              onClick={() => setShowAppPreview(true)}
+              className="mt-3 flex items-center gap-1.5 text-xs font-medium text-accent hover:text-accent-hover transition-colors cursor-pointer"
             >
-              Copy
+              <Eye size={12} />
+              Preview application page
             </button>
           </div>
-          <p className="text-xs text-muted mt-2">Use this as the Apply link on every job board.</p>
+
+          {/* Card B — import */}
+          <div className="p-5 rounded-2xl bg-surface border border-border flex flex-col">
+            <p className="text-sm font-semibold text-text mb-2">Already have applicants? Import them</p>
+            <p className="text-xs text-muted leading-relaxed flex-1 mb-4">
+              Export from Greenhouse, Lever or a job board and upload the file. Pathline reads the resumes and sorts them with everyone else.
+            </p>
+            <div className="flex flex-col gap-2">
+              <button
+                onClick={() => setImportOpen(true)}
+                className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-accent text-white text-sm font-semibold hover:bg-accent-hover transition-colors cursor-pointer"
+              >
+                <Upload size={14} />
+                Import
+              </button>
+              <button
+                onClick={() => toast("Sample export downloaded")}
+                className="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-xl border border-border bg-bg text-muted text-sm hover:bg-border/50 hover:text-text transition-colors cursor-pointer"
+              >
+                Download sample export
+              </button>
+            </div>
+          </div>
         </div>
-      </Card>
+      </div>
 
       {/* Review & publish — public job post preview */}
       <div className="mb-6">
@@ -502,6 +532,112 @@ export default function SetupPage() {
       </div>
 
       {importOpen && <ImportModal onClose={() => setImportOpen(false)} />}
+
+      {/* Application page preview modal */}
+      {showAppPreview && (
+        <div
+          className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4"
+          onClick={() => setShowAppPreview(false)}
+        >
+          <div
+            className="bg-surface rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal header */}
+            <div className="flex items-center justify-between px-5 py-4 border-b border-border">
+              <div>
+                <p className="text-xs font-medium text-muted uppercase tracking-wide">Application page preview</p>
+                <p className="text-xs text-muted mt-0.5">What candidates see when they click Apply</p>
+              </div>
+              <button
+                onClick={() => setShowAppPreview(false)}
+                className="p-1.5 rounded-lg text-muted hover:text-text hover:bg-bg transition-colors cursor-pointer"
+              >
+                <X size={15} />
+              </button>
+            </div>
+
+            {/* Candidate-facing application page */}
+            <div className="p-5">
+              {/* Role header */}
+              <div className="mb-6">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-8 h-8 rounded-lg bg-accent-light border border-accent/20 flex items-center justify-center text-xs font-bold text-accent flex-shrink-0">
+                    V
+                  </div>
+                  <span className="text-sm text-muted">Vittacus</span>
+                </div>
+                <h2 className="text-lg font-semibold text-text">{title || "Business Operations Associate"}</h2>
+                <div className="flex items-center gap-2 mt-1 flex-wrap">
+                  <span className="text-xs text-muted">{location || "Location"}</span>
+                  <span className="text-muted text-xs">·</span>
+                  <span className="text-xs text-muted">
+                    ${salaryMin ? (parseInt(salaryMin) / 1000).toFixed(0) : "?"}k–${salaryMax ? (parseInt(salaryMax) / 1000).toFixed(0) : "?"}k
+                  </span>
+                  <span className="text-muted text-xs">·</span>
+                  <span className="text-xs text-muted">{team || "Team"}</span>
+                </div>
+              </div>
+
+              {/* Resume upload */}
+              <div className="mb-5">
+                <label className="block text-xs font-medium text-muted uppercase tracking-wide mb-1.5">Resume</label>
+                <div className="flex flex-col items-center justify-center gap-2 p-6 rounded-xl border-2 border-dashed border-border bg-bg">
+                  <Upload size={18} className="text-muted" />
+                  <p className="text-sm text-muted text-center">Drop your resume or <span className="text-accent font-medium">browse</span></p>
+                  <p className="text-xs text-muted">PDF or Word doc</p>
+                </div>
+              </div>
+
+              {/* Optional application questions */}
+              <div className="mb-5">
+                <p className="text-sm font-medium text-text mb-0.5">Two short questions</p>
+                <p className="text-xs text-muted mb-3">Optional (about 5 min). You won&apos;t be penalized for skipping.</p>
+                <div className="flex flex-col gap-4">
+                  <div>
+                    <p className="text-xs text-text leading-relaxed mb-1.5">
+                      Tell us about a time you owned a messy process from start to finish. What did you change, and what was the result?
+                    </p>
+                    <textarea
+                      rows={3}
+                      placeholder="Your answer (150 words or fewer)"
+                      className="w-full px-3 py-2 rounded-xl border border-border bg-bg text-text text-sm focus:outline-none focus:border-accent/50 resize-none placeholder:text-muted/50"
+                      readOnly
+                    />
+                  </div>
+                  <div>
+                    <p className="text-xs text-text leading-relaxed mb-1.5">
+                      Describe a situation where you had to use data to influence a decision. What did you find, and how did you present it?
+                    </p>
+                    <textarea
+                      rows={3}
+                      placeholder="Your answer (150 words or fewer)"
+                      className="w-full px-3 py-2 rounded-xl border border-border bg-bg text-text text-sm focus:outline-none focus:border-accent/50 resize-none placeholder:text-muted/50"
+                      readOnly
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Response commitment */}
+              <div className="mb-5 p-3 rounded-xl bg-emerald-50 border border-emerald-200">
+                <p className="text-xs font-medium text-emerald-800">
+                  96% of applicants hear back within {responseCommitment} days · Vittacus track record
+                </p>
+              </div>
+
+              {/* Submit (disabled in preview) */}
+              <button
+                disabled
+                className="w-full py-3 rounded-xl bg-accent text-white text-sm font-semibold opacity-50 cursor-not-allowed"
+              >
+                Submit application
+              </button>
+              <p className="text-xs text-muted text-center mt-2">Preview only — this form isn&apos;t live</p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
