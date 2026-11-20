@@ -102,7 +102,7 @@ function SpotCheckModal({
 }
 
 export default function ClosurePage() {
-  const { candidates, role, responseCommitment, advanceStep } = useDemo()
+  const { candidates, role, responseCommitment, autoStillReviewing, advanceStep } = useDemo()
   const { toast } = useToast()
 
   const [talentPool, setTalentPool] = useState(true)
@@ -190,6 +190,16 @@ export default function ClosurePage() {
             </div>
           )}
         </div>
+
+        {/* Auto still-reviewing banner */}
+        {autoStillReviewing && nearDeadlineCount > 0 && (
+          <div className="flex items-center gap-3 mb-4 p-3.5 rounded-xl bg-accent-light border border-accent/20">
+            <Clock size={14} className="text-accent flex-shrink-0" />
+            <p className="text-xs text-text">
+              <span className="font-semibold">{nearDeadlineCount} applicants</span> will get an automatic &apos;still reviewing&apos; update tomorrow.
+            </p>
+          </div>
+        )}
 
         {/* Talent pool toggle */}
         <Card className="mb-6" padding="sm">

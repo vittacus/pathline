@@ -41,7 +41,7 @@ const COMMITMENT_OPTIONS = [
 
 export default function SetupPage() {
   const router = useRouter()
-  const { responseCommitment, setResponseCommitment, blindScreening, setBlindScreening, advanceStep } = useDemo()
+  const { responseCommitment, setResponseCommitment, blindScreening, setBlindScreening, autoStillReviewing, setAutoStillReviewing, advanceStep } = useDemo()
   const { toast } = useToast()
   const [title, setTitle] = useState("Business Operations Associate")
   const [team, setTeam] = useState("Operations")
@@ -58,6 +58,9 @@ export default function SetupPage() {
   const [isDragging, setIsDragging] = useState(false)
   const [importOpen, setImportOpen] = useState(false)
   const [showAppPreview, setShowAppPreview] = useState(false)
+  const [showCustom, setShowCustom] = useState(false)
+  const [customDays, setCustomDays] = useState(7)
+  const [showAutoPreview, setShowAutoPreview] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
 
   const addStage = () => {
@@ -332,13 +335,14 @@ export default function SetupPage() {
             <label className="block text-xs font-medium text-muted uppercase tracking-wide mb-1.5">
               Response commitment
             </label>
-            <div className="flex gap-2 flex-wrap">
+            {/* Preset + Custom buttons */}
+            <div className="flex gap-2 flex-wrap items-center">
               {COMMITMENT_OPTIONS.map((opt) => (
                 <button
                   key={opt.days}
-                  onClick={() => setResponseCommitment(opt.days)}
+                  onClick={() => { setResponseCommitment(opt.days); setShowCustom(false) }}
                   className={`px-3.5 py-2 rounded-xl border text-sm font-medium transition-colors cursor-pointer ${
-                    responseCommitment === opt.days
+                    !showCustom && responseCommitment === opt.days
                       ? "bg-accent-light border-accent/40 text-accent"
                       : "bg-bg border-border text-text hover:border-accent/30"
                   }`}
@@ -346,10 +350,87 @@ export default function SetupPage() {
                   {opt.label}
                 </button>
               ))}
+              <button
+                onClick={() => { setShowCustom(true); setResponseCommitment(customDays) }}
+                className={`px-3.5 py-2 rounded-xl border text-sm font-medium transition-colors cursor-pointer ${
+                  showCustom
+                    ? "bg-accent-light border-accent/40 text-accent"
+                    : "bg-bg border-border text-text hover:border-accent/30"
+                }`}
+              >
+                Custom
+              </button>
             </div>
+
+            {/* Custom number input */}
+            {showCustom && (
+              <div className="flex items-center gap-2 mt-2">
+                <input
+                  type="number"
+                  min={3}
+                  max={30}
+                  value={customDays}
+                  onChange={(e) => {
+                    const v = Math.min(30, Math.max(3, parseInt(e.target.value) || 3))
+                    setCustomDays(v)
+                    setResponseCommitment(v)
+                  }}
+                  className="w-20 px-3 py-2 rounded-xl border border-border bg-bg text-text text-sm text-center focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/20"
+                />
+                <span className="text-sm text-muted">days (3–30)</span>
+              </div>
+            )}
+
             <p className="text-xs text-muted mt-1.5">
-              Every applicant hears back within this window. Pathline tracks it for you.
+              Every applicant hears back within {responseCommitment} days — a decision, or an honest update if you&apos;re still reviewing.
             </p>
+            <p className="text-xs text-muted/70 mt-1">Suggested: 7 days for ~500 applicants and 1 recruiter.</p>
+
+            {/* Job post line */}
+            <p className="text-xs text-muted mt-2.5">
+              On your job post:{" "}
+              <span className="text-text font-medium">&ldquo;Vittacus responds to applicants within {responseCommitment} days.&rdquo;</span>
+            </p>
+
+            {/* Auto-send toggle */}
+            <div className="mt-4 pt-4 border-t border-border">
+              <div className="flex items-center justify-between gap-4">
+                <div>
+                  <p className="text-sm font-medium text-text">Auto-send a &apos;still reviewing&apos; update at the deadline</p>
+                  <p className="text-xs text-muted mt-0.5">Never a rejection — just an honest update.</p>
+                </div>
+                <button
+                  onClick={() => setAutoStillReviewing(!autoStillReviewing)}
+                  className={`w-11 h-6 rounded-full transition-colors cursor-pointer flex-shrink-0 relative ${
+                    autoStillReviewing ? "bg-accent" : "bg-border"
+                  }`}
+                >
+                  <div
+                    className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow-sm transition-transform ${
+                      autoStillReviewing ? "translate-x-5" : "translate-x-0.5"
+                    }`}
+                  />
+                </button>
+              </div>
+              {autoStillReviewing && (
+                <div className="mt-2.5">
+                  <button
+                    onClick={() => setShowAutoPreview((v) => !v)}
+                    className="flex items-center gap-1 text-xs text-accent hover:text-accent-hover transition-colors cursor-pointer"
+                  >
+                    {showAutoPreview ? "Hide preview" : "Preview message"}
+                    <ChevronDown size={11} className={`transition-transform ${showAutoPreview ? "rotate-180" : ""}`} />
+                  </button>
+                  {showAutoPreview && (
+                    <div className="mt-2 p-3 rounded-xl bg-bg border border-border text-xs text-text leading-relaxed">
+                      Hi [Name], we&apos;re still reviewing applications for the {title || "Business Operations Associate"} role and expect to update you by{" "}
+                      {new Date(Date.now() + responseCommitment * 86400000).toLocaleDateString("en-US", { month: "long", day: "numeric" })}.
+                      Thanks for your patience. — Vittacus
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="flex items-center justify-between gap-4">

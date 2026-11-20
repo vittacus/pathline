@@ -35,6 +35,8 @@ interface DemoContextValue {
   setShowNames: (v: boolean) => void
   setResponseCommitment: (days: number) => void
   setBlindScreening: (v: boolean) => void
+  autoStillReviewing: boolean
+  setAutoStillReviewing: (v: boolean) => void
   advanceStep: (stepIndex: number) => void
   shortlist: (id: string) => void
   bulkShortlist: (ids: string[]) => void
@@ -147,6 +149,7 @@ export function DemoProvider({ children }: { children: ReactNode }) {
   const [nudgeCount, setNudgeCount] = useState(0)
   const [responseCommitment, setResponseCommitmentState] = useState(7)
   const [blindScreening, setBlindScreeningState] = useState(true)
+  const [autoStillReviewing, setAutoStillReviewingState] = useState(true)
   const [maxReachedStep, setMaxReachedStep] = useState(0)
   const [resumeUrls, setResumeUrls] = useState<Record<string, string>>({})
 
@@ -343,6 +346,7 @@ export function DemoProvider({ children }: { children: ReactNode }) {
     setNudgeCount(0)
     setResponseCommitmentState(7)
     setBlindScreeningState(true)
+    setAutoStillReviewingState(true)
     setMaxReachedStep(DEMO_CANDIDATES.filter((c) => c.status === "shortlisted").length > 0 ? 2 : 0)
     setResumeUrls((prev) => {
       Object.values(prev).forEach((url) => URL.revokeObjectURL(url))
@@ -370,6 +374,8 @@ export function DemoProvider({ children }: { children: ReactNode }) {
         setShowNames,
         setResponseCommitment,
         setBlindScreening,
+        autoStillReviewing,
+        setAutoStillReviewing: setAutoStillReviewingState,
         advanceStep,
         shortlist,
         bulkShortlist,
