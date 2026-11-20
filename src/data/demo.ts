@@ -3,6 +3,10 @@
 // ─── Types ───────────────────────────────────────────────────────────────────
 
 export type WeightLabel = "Low" | "Medium" | "High"
+export type BucketId = "priority" | "strong" | "review" | "not_now" | "shortlisted"
+export const STRONG_THRESHOLD = 70
+export const SHORTLIST_QUALITY = { shortlisted: 10, passedIntro: 7 }
+export const SAMPLE_INTERVIEWED_COUNT = 3
 
 export interface Trait {
   id: string
@@ -52,6 +56,8 @@ export interface Candidate {
   personalLine: string // pre-written outreach line grounded in their evidence
   status: "pending" | "shortlisted" | "pass" | "closed"
   appliedDate: string // ISO date string, e.g. "2026-11-17"
+  bucket?: "priority" | "strong" | "review" // manual override for pending candidates
+  manuallyBucketed?: boolean // prevents auto-reassignment after nudge
 }
 
 export interface Role {
@@ -626,6 +632,8 @@ export const DEMO_CANDIDATES: Candidate[] = [
       "Your 200-partner relationship management experience — with a 94% satisfaction rate — shows strong operator instincts we'd put to work immediately.",
     status: "pending",
     appliedDate: "2026-11-16",
+    bucket: "priority",
+    manuallyBucketed: true,
   },
   {
     id: "c08",
@@ -702,6 +710,8 @@ export const DEMO_CANDIDATES: Candidate[] = [
       "Your discovery of the $40K reconciliation error — and the auto-check you built to prevent recurrence — shows the kind of detail-oriented ownership we need.",
     status: "pending",
     appliedDate: "2026-11-15",
+    bucket: "priority",
+    manuallyBucketed: true,
   },
   {
     id: "c10",

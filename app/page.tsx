@@ -3,8 +3,8 @@
 import { useState } from "react"
 import Link from "next/link"
 import { useDemo } from "@/context/DemoContext"
-import { daysWaiting, APPLICANT_SOURCES } from "@/data/demo"
-import { ArrowRight, TrendingUp, Lock, X } from "lucide-react"
+import { daysWaiting, APPLICANT_SOURCES, SHORTLIST_QUALITY, SAMPLE_INTERVIEWED_COUNT } from "@/data/demo"
+import { ArrowRight, TrendingUp, Lock, X, Star } from "lucide-react"
 import { Card } from "@/components/ui/Card"
 
 const SAMPLE_ROLES = [
@@ -24,7 +24,7 @@ function getGreeting() {
 }
 
 export default function HomePage() {
-  const { role, candidates, sortedCandidates, scoreOf, responseCommitment } = useDemo()
+  const { role, candidates, sortedCandidates, scoreOf, responseCommitment, bucketCounts, getBucketOf } = useDemo()
   const [howItWorksDismissed, setHowItWorksDismissed] = useState(false)
 
   const shortlisted = candidates.filter((c) => c.status === "shortlisted")
@@ -140,14 +140,32 @@ export default function HomePage() {
         {/* Impact funnel */}
         <div className="mb-5">
           <p className="text-xs font-medium text-muted uppercase tracking-wide mb-3">Impact funnel</p>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <FunnelStep label="Applied" count={role.applicantCount} accent={false} />
             <ArrowRight size={12} className="text-muted flex-shrink-0" />
-            <FunnelStep label="Ranked by Pathline" count={ranked} accent={false} />
+            <FunnelStep label="Sorted" count={ranked} accent={false} />
             <ArrowRight size={12} className="text-muted flex-shrink-0" />
             <FunnelStep label="Shortlisted" count={shortlisted.length} accent={true} />
             <ArrowRight size={12} className="text-muted flex-shrink-0" />
+            <FunnelStep label="Interviewed" count={SAMPLE_INTERVIEWED_COUNT} accent={false} />
+            <ArrowRight size={12} className="text-muted flex-shrink-0" />
             <FunnelStep label="Closed" count={heardBack} accent={false} />
+          </div>
+        </div>
+
+        {/* Shortlist quality */}
+        <div className="mb-5 p-4 rounded-xl bg-bg border border-border">
+          <div className="flex items-start gap-3">
+            <Star size={14} className="text-accent mt-0.5 flex-shrink-0" />
+            <div>
+              <p className="text-sm font-semibold text-text">
+                {SHORTLIST_QUALITY.passedIntro} of {SHORTLIST_QUALITY.shortlisted} shortlisted passed the intro call
+                <span className="ml-1.5 text-sm font-normal text-muted">
+                  ({Math.round((SHORTLIST_QUALITY.passedIntro / SHORTLIST_QUALITY.shortlisted) * 100)}%)
+                </span>
+              </p>
+              <p className="text-xs text-muted mt-0.5">How well Pathline's evaluation holds up in real interviews.</p>
+            </div>
           </div>
         </div>
 
@@ -174,39 +192,60 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* Top pending candidates preview */}
-      {top3.length > 0 && (
+      {/* Priority & strong matches */}
+      {(bucketCounts.priority > 0 || bucketCounts.strong > 0) && (
         <div className="mb-6">
           <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-semibold text-text">Top candidates waiting</h3>
+            <div className="flex items-center gap-2">
+              <h3 className="text-sm font-semibold text-text">Priority & strong matches</h3>
+              <div className="flex items-center gap-1.5 text-xs text-muted">
+                {bucketCounts.priority > 0 && (
+                  <span className="px-1.5 py-0.5 rounded-full bg-bg border border-border">
+                    Priority {bucketCounts.priority}
+                  </span>
+                )}
+                {bucketCounts.strong > 0 && (
+                  <span className="px-1.5 py-0.5 rounded-full bg-bg border border-border">
+                    Strong match {bucketCounts.strong}
+                  </span>
+                )}
+              </div>
+            </div>
             <Link href="/queue" className="text-xs text-accent hover:text-accent-hover transition-colors">
-              See all {toReview} →
+              Review all →
             </Link>
           </div>
           <div className="flex flex-col gap-2">
-            {top3.map((c, i) => (
-              <Link
-                key={c.id}
-                href="/queue"
-                className="flex items-center gap-4 p-4 rounded-xl bg-surface border border-border hover:border-accent/30 hover:bg-accent-light/30 transition-colors"
-              >
-                <span className="text-xs text-muted tabular-nums w-4 text-right flex-shrink-0 font-medium">{i + 1}</span>
-                <div className="w-8 h-8 rounded-full bg-bg border border-border flex items-center justify-center text-xs font-semibold text-muted flex-shrink-0">
-                  {c.initials}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-text truncate">{c.headline}</p>
-                  <div className="flex gap-1 mt-0.5 flex-wrap">
-                    {c.whySurfaced.slice(0, 2).map((tag) => (
-                      <span key={tag} className="text-xs text-muted">{tag}</span>
-                    ))}
+            {[
+              ...candidates.filter((c) => getBucketOf(c) === "priority"),
+              ...candidates.filter((c) => getBucketOf(c) === "strong").sort((a, b) => scoreOf(b) - scoreOf(a)),
+            ].slice(0, 3).map((c) => {
+              const bucket = getBucketOf(c)
+              return (
+                <Link
+                  key={c.id}
+                  href="/queue"
+                  className="flex items-center gap-3 p-4 rounded-xl bg-surface border border-border hover:border-accent/30 hover:bg-accent-light/30 transition-colors"
+                >
+                  <div className="w-8 h-8 rounded-full bg-bg border border-border flex items-center justify-center text-xs font-semibold text-muted flex-shrink-0">
+                    {c.initials}
                   </div>
-                </div>
-                <div className="flex items-center gap-2 flex-shrink-0">
-                  <ScoreRing score={scoreOf(c)} />
-                </div>
-              </Link>
-            ))}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-text truncate">{c.headline}</p>
+                    <div className="flex gap-1 mt-0.5 flex-wrap items-center">
+                      {bucket === "priority" && (
+                        <span className="px-1.5 py-0.5 rounded text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">
+                          Priority
+                        </span>
+                      )}
+                      {c.whySurfaced.slice(0, 2).map((tag) => (
+                        <span key={tag} className="text-xs text-muted">{tag}</span>
+                      ))}
+                    </div>
+                  </div>
+                </Link>
+              )
+            })}
           </div>
         </div>
       )}
@@ -272,14 +311,3 @@ function FunnelStep({ label, count, accent }: { label: string; count: number; ac
   )
 }
 
-function ScoreRing({ score }: { score: number }) {
-  const color = score >= 75 ? "#059669" : score >= 50 ? "#D97706" : "#94A3B8"
-  return (
-    <div
-      className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold border-2"
-      style={{ borderColor: color, color }}
-    >
-      {score}
-    </div>
-  )
-}

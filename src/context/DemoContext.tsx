@@ -14,6 +14,8 @@ import {
   DEMO_CANDIDATE_IDS,
   computeScore,
   nudgeWeights,
+  STRONG_THRESHOLD,
+  type BucketId,
   type Role,
   type Candidate,
   type Trait,
@@ -29,6 +31,7 @@ interface DemoContextValue {
   blindScreening: boolean // names hidden in queue until shortlisted
   maxReachedStep: number // furthest workflow step index (0=setup…4=closure)
   resumeUrls: Record<string, string> // candidateId → object URL for imported PDFs
+  bucketCounts: Record<BucketId, number>
   setShowNames: (v: boolean) => void
   setResponseCommitment: (days: number) => void
   setBlindScreening: (v: boolean) => void
@@ -37,10 +40,13 @@ interface DemoContextValue {
   bulkShortlist: (ids: string[]) => void
   setPass: (id: string) => void
   bulkPass: (ids: string[]) => void
+  moveToBucket: (id: string, bucket: BucketId) => void
+  bulkMoveToBucket: (ids: string[], bucket: BucketId) => void
   applyNudge: (candidateId: string, dir: "more" | "less") => void
   updateTraitWeights: (traits: Trait[]) => void
   addImportedCandidates: (newCandidates: Candidate[], urls: Record<string, string>) => void
   scoreOf: (candidate: Candidate) => number
+  getBucketOf: (candidate: Candidate) => BucketId
   resetDemo: () => void
 }
 
@@ -50,7 +56,7 @@ const STORAGE_KEY = "pathline-demo-state"
 
 interface PersistedState {
   traits: Trait[]
-  candidates: Array<{ id: string; status: Candidate["status"] }>
+  candidates: Array<{ id: string; status: Candidate["status"]; bucket?: "priority" | "strong" | "review"; manuallyBucketed?: boolean }>
   showNames: boolean
   nudgeCount: number
   responseCommitment: number
@@ -81,6 +87,13 @@ function saveState(state: PersistedState) {
   }
 }
 
+function getBucketOf(candidate: Candidate, traits: Trait[]): BucketId {
+  if (candidate.status === "shortlisted") return "shortlisted"
+  if (candidate.status === "pass") return "not_now"
+  if (candidate.bucket) return candidate.bucket
+  return computeScore(candidate, traits) >= STRONG_THRESHOLD ? "strong" : "review"
+}
+
 function getInitialState(): {
   traits: Trait[]
   candidates: Candidate[]
@@ -105,11 +118,16 @@ function getInitialState(): {
   }
   const traitMap = new Map(persisted.traits.map((t) => [t.id, t]))
   const traits = DEMO_ROLE.traits.map((t) => traitMap.get(t.id) ?? t)
-  const statusMap = new Map(persisted.candidates.map((c) => [c.id, c.status]))
-  const candidates = DEMO_CANDIDATES.map((c) => ({
-    ...c,
-    status: statusMap.get(c.id) ?? c.status,
-  }))
+  const candidateMap = new Map(persisted.candidates.map((c) => [c.id, c]))
+  const candidates = DEMO_CANDIDATES.map((c) => {
+    const p = candidateMap.get(c.id)
+    return {
+      ...c,
+      status: p?.status ?? c.status,
+      bucket: p?.bucket ?? c.bucket,
+      manuallyBucketed: p?.manuallyBucketed ?? c.manuallyBucketed,
+    }
+  })
   return {
     traits,
     candidates,
@@ -156,7 +174,7 @@ export function DemoProvider({ children }: { children: ReactNode }) {
     ) => {
       saveState({
         traits: nextTraits,
-        candidates: nextCandidates.map((c) => ({ id: c.id, status: c.status })),
+        candidates: nextCandidates.map((c) => ({ id: c.id, status: c.status, bucket: c.bucket, manuallyBucketed: c.manuallyBucketed })),
         showNames: nextShowNames,
         nudgeCount: nextNudgeCount,
         responseCommitment: nextResponseCommitment ?? responseCommitment,
@@ -171,6 +189,16 @@ export function DemoProvider({ children }: { children: ReactNode }) {
     (candidate: Candidate) => computeScore(candidate, traits),
     [traits]
   )
+
+  const getBucketOfCb = useCallback(
+    (candidate: Candidate): BucketId => getBucketOf(candidate, traits),
+    [traits]
+  )
+
+  const bucketCounts: Record<BucketId, number> = { priority: 0, strong: 0, review: 0, not_now: 0, shortlisted: 0 }
+  for (const c of candidates) {
+    bucketCounts[getBucketOf(c, traits)]++
+  }
 
   const sortedCandidates = [...candidates]
     .filter((c) => c.status === "pending" || c.status === "pass")
@@ -247,6 +275,35 @@ export function DemoProvider({ children }: { children: ReactNode }) {
     [candidates, traits, showNames, nudgeCount, persist]
   )
 
+  const moveToBucket = useCallback(
+    (id: string, bucket: BucketId) => {
+      const next = candidates.map((c) => {
+        if (c.id !== id) return c
+        if (bucket === "shortlisted") return { ...c, status: "shortlisted" as const, bucket: undefined, manuallyBucketed: true }
+        if (bucket === "not_now") return { ...c, status: "pass" as const, bucket: undefined, manuallyBucketed: true }
+        return { ...c, status: "pending" as const, bucket, manuallyBucketed: true }
+      })
+      setCandidates(next)
+      persist(traits, next, showNames, nudgeCount)
+    },
+    [candidates, traits, showNames, nudgeCount, persist]
+  )
+
+  const bulkMoveToBucket = useCallback(
+    (ids: string[], bucket: BucketId) => {
+      const idSet = new Set(ids)
+      const next = candidates.map((c) => {
+        if (!idSet.has(c.id)) return c
+        if (bucket === "shortlisted") return { ...c, status: "shortlisted" as const, bucket: undefined, manuallyBucketed: true }
+        if (bucket === "not_now") return { ...c, status: "pass" as const, bucket: undefined, manuallyBucketed: true }
+        return { ...c, status: "pending" as const, bucket, manuallyBucketed: true }
+      })
+      setCandidates(next)
+      persist(traits, next, showNames, nudgeCount)
+    },
+    [candidates, traits, showNames, nudgeCount, persist]
+  )
+
   const applyNudge = useCallback(
     (candidateId: string, dir: "more" | "less") => {
       const candidate = candidates.find((c) => c.id === candidateId)
@@ -309,6 +366,7 @@ export function DemoProvider({ children }: { children: ReactNode }) {
         blindScreening,
         maxReachedStep,
         resumeUrls,
+        bucketCounts,
         setShowNames,
         setResponseCommitment,
         setBlindScreening,
@@ -317,10 +375,13 @@ export function DemoProvider({ children }: { children: ReactNode }) {
         bulkShortlist,
         setPass,
         bulkPass,
+        moveToBucket,
+        bulkMoveToBucket,
         applyNudge,
         updateTraitWeights,
         addImportedCandidates,
         scoreOf,
+        getBucketOf: getBucketOfCb,
         resetDemo,
       }}
     >

@@ -81,7 +81,7 @@ This is where Pathline is most different from LinkedIn.
 # **Core Flow**
 
 1. **Create a Role and Calibrate**: Enter title, team, location, salary range, process stages, response commitment (5/7/10/14 days, default 7), and blind screening toggle (on by default). The role setup also shows the two intake paths: (a) Apply link — Pathline generates a unique apply link (e.g., pathline.app/apply/vittacus-bizops) that the recruiter uses as the Apply link on every job board; applicants who apply through it land in Pathline directly and can optionally answer the application questions; (b) Import — recruiters can import applicants from an ATS (Greenhouse, Lever) or CSV export, which arrives as resume evidence only. Pathline then suggests 6 starting traits for the role type. Each trait starts as “Suggested” — the recruiter approves the ones that fit and sets a weight (Low / Medium / High). An “Approve all” shortcut speeds this up. A live impact preview updates instantly on every approval or weight change, showing the number of strong matches from the pool. Weights can also be calibrated via “Learn from your best hires”: add 3 people you’d hire again (or use the sample profiles), Pathline analyzes what they have in common and suggests weight changes one at a time — the recruiter accepts or skips each. Below the traits, Pathline suggests 2 application questions auto-generated from the top-weighted traits. A “Save as template” button and a “Preview job post” panel (salary, stages, traits rubric, response commitment track record) round out the screen.  
-2. **Daily ranked queue**: “487 applicants, your top 40 today.” Each candidate card shows a short summary, a match score, a plain-English “why #1” sentence, a score breakdown by trait (bar chart), and evidence cards tagged by source (resume or short answer) and trait. Actions include: Shortlist, Pass, More like this, and Less like this. When blind screening is on, names are hidden automatically — no toggle, just a lock badge. The queue re-ranks live as the recruiter gives feedback.  
+2. **Review with buckets**: Candidates are auto-sorted into two buckets by score (Strong match ≥ 72, Worth reviewing below) plus two recruiter-managed buckets (Priority — manually flagged — and Not now). A fifth Shortlist bucket collects candidates the recruiter has advanced. Bucket tabs show counts and are the primary navigation in Review. Within each bucket, candidates are ordered by evidence strength without rank numbers or score circles visible. The detail panel shows a “Why in this bucket” sentence, evidence cards tagged by trait and source, and a score breakdown behind a collapsed toggle. Actions are: Shortlist (primary), Move to… (Priority / Strong match / Worth reviewing / Not now), Pass, More like this, Less like this. Keyboard shortcuts: S shortlist, P pass, 1–4 move to bucket. Multi-select works within a bucket for bulk actions. After More/Less like this, Pathline recalculates and auto-reassigns non-manually-placed candidates between Strong match and Worth reviewing, then toasts “Moved 3 candidates from Worth reviewing to Strong match because you weighted X higher.” Candidates the recruiter manually placed are never auto-moved. Selecting 2–3 candidates opens a Compare view: one column per candidate, one row per trait, showing evidence strength (Low / Med / High dots) and the best evidence quote per trait, with the strongest column subtly highlighted per row. Each column has Shortlist and Move to… buttons. 
 4. **Shortlist and Outreach (Moment of Connection)**: For each shortlisted candidate, Pathline drafts an intro email using a shared template plus one personal line grounded in that person’s evidence. The recruiter clicks to edit inline or adjusts the shared template for all invites. The right panel shows a preview of exactly what the candidate receives, plus a “Track your application status” link.  
 5. **Close for all parties:** Every applicant has a visible status. Candidates not moving forward get a kind, recruiter-approved note within the response commitment window, with an option to join the company’s talent pool. Applicants approaching their deadline are flagged so the recruiter can send a “still reviewing” update instead of silence. Two separate closure note templates are used: (a) for candidates the recruiter individually reviewed and passed on — this note can honestly claim careful review; (b) for the bulk of applicants below the shortlist who were not individually reviewed — this note is honest about the volume and never claims individual review. Recruiters see both templates, can edit them, and approve before sending.
 
@@ -104,8 +104,10 @@ This is where Pathline is most different from LinkedIn.
 **Must have:**
 
 * Role setup (title, team, location, salary, process stages, response commitment select, blind screening toggle) and a single calibration screen with approve-first traits, Low / Medium / High weight controls, live impact preview, “Learn from your best hires” calibration (Accept/Skip per suggested change), editable application questions, a template save action, and a public job post preview.
-* Ranked queue of about 40 sample candidates, labeled as drawn from a pool of 487. Some have answered the application questions and some have resume evidence only.
-* Candidate detail with a plain-English “why” sentence, score breakdown by trait (bar chart), and evidence cards tagged by source and trait. Shortlist, Pass, More like this, and Less like this actions with live re-ranking.
+* Review screen with five bucket tabs (Priority, Strong match, Worth reviewing, Not now, Shortlist), each with a count. Auto-placement: score ≥ 72 → Strong match, else Worth reviewing. Priority and Not now are recruiter-managed.
+* Candidate detail with “Why in this bucket” sentence, evidence cards tagged by source and trait, score breakdown behind a collapsed toggle (score only visible there). Actions: Shortlist, Move to…, Pass, More like this, Less like this. Keyboard: S shortlist, P pass, 1–4 move bucket.
+* Compare view for 2–3 selected candidates: columns per candidate, rows per trait with Low/Med/High strength dots and best evidence quote, strongest column highlighted per row, Shortlist/Move buttons per column.
+* Auto-bucket reassignment on More/Less like this: non-manually-placed candidates shift between Strong match and Worth reviewing; manually-placed candidates never auto-move; toast explains what moved and why.
 * Blind screening: names hidden in queue until shortlisted (enforced when blind screening is on; shown as a lock badge, not a toggle).
 * Outreach: shared template with per-candidate personal line, inline editing, “Edit template for all invites” button, right-panel email preview showing exactly what the candidate receives.
 * Closure notes for candidates not moving forward, with applicant deadline tracking and a “Send still reviewing” option for near-deadline applicants.
@@ -119,19 +121,20 @@ This is where Pathline is most different from LinkedIn.
 
 **Success Metrics**
 
-**Main Metric:** Time to a qualified shortlist, meaning hours from a role’s applications arriving to the recruiter approving 10 candidates for interviews. This is the current pain the wedge feels most and so should be the measuring point.
+**Main Metric:** Shortlist pass-through rate — the share of shortlisted candidates who advance past the first interview. This is the purest signal that Pathline found genuinely strong candidates, not just candidates who looked strong on a resume.
+
+**Secondary Main Metric:** Time to qualified shortlist — hours from a role’s applications arriving to the recruiter approving 10 candidates for interviews. Captures the efficiency half of the value.
 
 **Supporting Metrics:**
 
 * **Invite booking rate**: share of shortlisted candidates who book a call, indicating whether outreach and matches are good  
-* **Shortlist-to-onsite rate**: share of shortlisted candidates who advance past the first interview, indicating quality of ranking  
-* **Response coverage**: share of applicants who hear back within 7 days  
-* **Feedback per session**: how often recruiters use the ‘More like this’ or ‘Less like this’ selections, which is a sign they trust and use the calibration  
-* **Prompt approval rate:** share of auto-suggested prompts recruiters approve without edits, which shows whether suggestions actually save them time.
+* **Response coverage**: share of applicants who hear back within the commitment window  
+* **Feedback per session**: how often recruiters use More/Less like this or Move to…, a sign they trust and use the calibration  
+* **Prompt approval rate:** share of auto-suggested prompts recruiters approve without edits
 
 **Efficiency Metrics:**
 
-* **Reduction ratio**: applicants in versus candidates the recruiter actually reviews. The target is roughly 500 to 50, matching the recruiter’s own goal  
+* **Reduction ratio**: applicants in versus candidates the recruiter actually reviews (target ≈ 500 → 50)  
 * **Recruiter time per role**: total hours spent screening a role, compared with the recruiter’s usual process  
 * **Time to first interview**: days from posting to the first booked interview
 
